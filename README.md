@@ -3,4 +3,4 @@ A reckless attempt at prototyping Starknet Name Service, so that we have an onch
 
 ### where and how to use it
 - Currently deployed on StarkNet testnet at: 0x079e0f3d15e10b15223d2aa9843bd2f6ea9d21408caa2592a2e9a6bfc33820ac
-- Function for address-name lookup: `sns_lookup (adr) -> (exist, name)`
+- Function for address-name lookup: `sns_lookup (adr : felt) -> (exist : felt, name : felt)`
