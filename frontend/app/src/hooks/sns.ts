@@ -6,6 +6,6 @@ import SNSAbi from '~/abi/sns_abi.json'
 export function useSNSContract() {
   return useContract({
     abi: SNSAbi.abi as Abi[],
-    address: '0x079e0f3d15e10b15223d2aa9843bd2f6ea9d21408caa2592a2e9a6bfc33820ac',
+    address: '0x00b14b453b3bf720812269d58a709b610a079289becfd53ddb00ff579101a04a',
   })
 }
