@@ -8,7 +8,7 @@
                 "type": "felt"
             }
         ],
-        "name": "sns_lookup",
+        "name": "sns_lookup_adr_to_name",
         "outputs": [
             {
                 "name": "exist",
@@ -16,6 +16,27 @@
             },
             {
                 "name": "name",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "name",
+                "type": "felt"
+            }
+        ],
+        "name": "sns_lookup_name_to_adr",
+        "outputs": [
+            {
+                "name": "exist",
+                "type": "felt"
+            },
+            {
+                "name": "adr",
                 "type": "felt"
             }
         ],

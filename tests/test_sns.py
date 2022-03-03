@@ -7,8 +7,7 @@ import asyncio
 from Signer import Signer
 from binascii import hexlify, unhexlify
 
-
-NUM_SIGNING_ACCOUNTS = 3
+NUM_SIGNING_ACCOUNTS = 5
 DUMMY_PRIVATE = 49582320498
 users = []
 
@@ -49,8 +48,10 @@ async def test_sns (account_factory):
     contract = await starknet.deploy('contracts/sns.cairo')
     print()
 
-    names = ['tom', 'kate', 'mahir']
-    for user,name in zip(users[0:2], names[0:2]):
+    names = ['tom', 'kate', 'mahir', 'priya']
+    N = 2
+    print(f'> Begin registering {N} pairs of (adr,name)')
+    for user,name in zip(users[0:N], names[0:N]):
         await user['signer'].send_transaction(
             account=user['account'],
             to=contract.contract_address,
@@ -58,13 +59,48 @@ async def test_sns (account_factory):
             calldata=[ ascii_to_felt(name) ]
         )
 
-    for user in users:
-        ret = await contract.sns_lookup(user['account'].contract_address).call()
+    print(f'> Begin lookup adr->name')
+    for i,user in enumerate(users):
+        ret = await contract.sns_lookup_adr_to_name (user['account'].contract_address).call()
+
+        if i<N:
+            assert ret.result.exist == 1
+        else:
+            assert ret.result.exist == 0
+
         if ret.result.exist == 1:
             name = felt_to_ascii (ret.result.name)
             print(f'exist: 1 / recovered name: {name}')
         else:
             print(f'exist: {ret.result.exist}')
+    print()
+
+    print(f'> Begin lookup name->adr')
+    for i,name in enumerate(names):
+        name_in_felt = ascii_to_felt (name)
+        ret = await contract.sns_lookup_name_to_adr (name_in_felt).call()
+
+        if i<N:
+            assert ret.result.exist == 1
+        else:
+            assert ret.result.exist == 0
+
+        if ret.result.exist == 1:
+            print(f'exist: 1 / recovered adr: {hex(ret.result.adr)}')
+        else:
+            print(f'exist: {ret.result.exist}')
+    print()
+
+    print(f'> Begin intentional registering with name collision')
+    user_malicious = users[NUM_SIGNING_ACCOUNTS-1]
+    with pytest.raises(Exception) as e_info:
+        for i in range(N):
+            await user_malicious['signer'].send_transaction(
+                account=user_malicious['account'],
+                to=contract.contract_address,
+                selector_name='sns_register',
+                calldata=[ ascii_to_felt(names[i]) ]
+            )
 
 def felt_to_ascii (felt):
     bytes_object = bytes.fromhex( hex(felt)[2:] )

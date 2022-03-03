@@ -5,7 +5,7 @@ import { useSNSContract } from '~/hooks/sns'
 export function ShowNameLookup() {
   const { account } = useStarknet()
   const { contract: sns } = useSNSContract()
-  const { data: valueSnsLookup } = useStarknetCall ({ contract: sns, method: 'sns_lookup', args: { adr:'0' } })
+  const { data: valueSnsLookup } = useStarknetCall ({ contract: sns, method: 'sns_lookup_adr_to_name', args: { adr:'0' } })
 
   if (!account) {
     return null
